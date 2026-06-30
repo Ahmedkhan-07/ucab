@@ -4,6 +4,10 @@ const AdminSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
+  role: {
+    type: String,
+    default: 'admin'
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
