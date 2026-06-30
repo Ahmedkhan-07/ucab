@@ -42,13 +42,8 @@ const Register = () => {
   };
 
   return (
-    <div className="bg-dark text-light min-vh-100 d-flex align-items-center justify-content-center p-3">
-      <div className="card text-light rounded-4 shadow-lg p-4 w-100" style={{
-        maxWidth: '450px',
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
-      }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center p-4">
+      <div className="glass-card p-4 w-100" style={{ maxWidth: '450px' }}>
         <div className="card-body">
           <h2 className="card-title fw-bold text-primary text-center mb-4">Register User</h2>
           

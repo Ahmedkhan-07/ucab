@@ -14,12 +14,11 @@ const Uhome = () => {
 
       <div className="row g-4 justify-content-center">
         <div className="col-md-6">
-          <div className="card border-0 rounded-4 shadow h-100 bg-dark text-light" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="glass-card h-100">
             <div className="card-body p-4 d-flex flex-column justify-content-between">
               <div>
                 <div className="d-inline-flex p-3 rounded-3 bg-primary text-white mb-3">
-                  {/* Fallback to simple icon text if bootstrap-icons hasn't loaded */}
-                  <span className="fs-3">🚗</span>
+                  <i className="bi bi-car-front-fill fs-3"></i>
                 </div>
                 <h3 className="card-title fw-bold">Book a Cab</h3>
                 <p className="card-text text-secondary mt-2">
@@ -34,11 +33,11 @@ const Uhome = () => {
         </div>
 
         <div className="col-md-6">
-          <div className="card border-0 rounded-4 shadow h-100 bg-dark text-light" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="glass-card h-100">
             <div className="card-body p-4 d-flex flex-column justify-content-between">
               <div>
                 <div className="d-inline-flex p-3 rounded-3 bg-success text-white mb-3">
-                  <span className="fs-3">📋</span>
+                  <i className="bi bi-journal-text fs-3"></i>
                 </div>
                 <h3 className="card-title fw-bold">My Bookings</h3>
                 <p className="card-text text-secondary mt-2">

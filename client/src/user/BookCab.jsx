@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import api, { ASSET_URL } from '../api';
 
 const BookCab = () => {
   const { id } = useParams();
@@ -18,6 +18,26 @@ const BookCab = () => {
     bookingTime: '',
     distance: '',
   });
+
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoError, setPromoError] = useState('');
+  
+  const [addDonation, setAddDonation] = useState(false);
+  const [refreshments, setRefreshments] = useState({
+    water: false,
+    snack: false,
+  });
+
+  const handleApplyPromo = () => {
+    setPromoError('');
+    const validCodes = ['WELCOME10', 'DISCOUNT10', 'AIRPORT20'];
+    if (validCodes.includes(promoCode)) {
+      setPromoApplied(true);
+    } else {
+      setPromoError('Invalid promo code. Try DISCOUNT10 or AIRPORT20.');
+    }
+  };
 
   useEffect(() => {
     const fetchCab = async () => {
@@ -47,6 +67,10 @@ const BookCab = () => {
     setSubmitting(true);
 
     try {
+      const refreshmentsArray = [];
+      if (refreshments.water) refreshmentsArray.push('water');
+      if (refreshments.snack) refreshmentsArray.push('snack');
+
       const payload = {
         carId: id,
         pickupLocation: formData.pickupLocation,
@@ -54,6 +78,9 @@ const BookCab = () => {
         bookingDate: formData.bookingDate,
         bookingTime: formData.bookingTime,
         distance: Number(formData.distance),
+        discountCode: promoApplied ? promoCode : '',
+        donationAmount: addDonation ? 2.00 : 0,
+        refreshments: refreshmentsArray,
       };
 
       await api.post('/bookings', payload);
@@ -66,7 +93,11 @@ const BookCab = () => {
     }
   };
 
-  const estimatedPrice = cab && formData.distance ? (Number(cab.pricePerKm) * Number(formData.distance)).toFixed(2) : 0;
+  const basePrice = cab && formData.distance ? Number(cab.pricePerKm) * Number(formData.distance) : 0;
+  const discountAmount = promoApplied ? basePrice * (promoCode === 'AIRPORT20' ? 0.2 : 0.1) : 0;
+  const donationAmount = addDonation ? 2.00 : 0;
+  const refreshmentsPrice = (refreshments.water ? 1.50 : 0) + (refreshments.snack ? 3.50 : 0);
+  const estimatedPrice = (basePrice - discountAmount + donationAmount + refreshmentsPrice).toFixed(2);
 
   if (loading) {
     return (
@@ -96,10 +127,10 @@ const BookCab = () => {
 
       <div className="row g-4">
         <div className="col-md-5">
-          <div className="card bg-dark text-light border-secondary shadow-sm rounded-4 overflow-hidden h-100" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="glass-card overflow-hidden h-100">
             {cab.image ? (
               <img
-                src={`http://localhost:5000${cab.image}`}
+                src={`${ASSET_URL}${cab.image}`}
                 alt={cab.name}
                 className="card-img-top"
                 style={{ height: '250px', objectFit: 'cover' }}
@@ -110,7 +141,7 @@ const BookCab = () => {
               />
             ) : (
               <div className="bg-secondary d-flex align-items-center justify-content-center" style={{ height: '250px' }}>
-                <span className="text-dark fs-1">🚕</span>
+                <i className="bi bi-car-front-fill fs-1 text-dark"></i>
               </div>
             )}
             <div className="card-body p-4">
@@ -136,7 +167,7 @@ const BookCab = () => {
         </div>
 
         <div className="col-md-7">
-          <div className="card bg-dark text-light border-secondary shadow-sm rounded-4 p-4" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="glass-card p-4">
             <h2 className="fw-bold mb-4">Book Your Ride</h2>
             
             {error && <div className="alert alert-danger py-2 small">{error}</div>}
@@ -208,14 +239,98 @@ const BookCab = () => {
                 />
               </div>
 
+              <div className="row g-3 mb-4">
+                <div className="col-md-6">
+                  <label className="form-label small text-secondary">Promo Code</label>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control bg-dark text-light border-secondary"
+                      placeholder="e.g. DISCOUNT10"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      disabled={promoApplied}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={handleApplyPromo}
+                      disabled={promoApplied}
+                    >
+                      {promoApplied ? 'Applied' : 'Apply'}
+                    </button>
+                  </div>
+                  {promoError && <div className="text-danger small mt-1">{promoError}</div>}
+                  {promoApplied && <div className="text-success small mt-1">Promo applied ({promoCode === 'AIRPORT20' ? '20%' : '10%'} discount)</div>}
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label small text-secondary">Carbon Offset</label>
+                  <div className="form-check form-switch mt-2">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="greenDonation"
+                      checked={addDonation}
+                      onChange={(e) => setAddDonation(e.target.checked)}
+                    />
+                    <label className="form-check-label small text-secondary" htmlFor="greenDonation">
+                      Add $2.00 Green Donation
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="form-label small text-secondary d-block">In-Cabin Refreshments (Optional)</label>
+                <div className="form-check form-check-inline me-4">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="waterCheck"
+                    checked={refreshments.water}
+                    onChange={(e) => setRefreshments({ ...refreshments, water: e.target.checked })}
+                  />
+                  <label className="form-check-label small text-secondary" htmlFor="waterCheck">
+                    Cold Water Bottle (+$1.50)
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="snackCheck"
+                    checked={refreshments.snack}
+                    onChange={(e) => setRefreshments({ ...refreshments, snack: e.target.checked })}
+                  />
+                  <label className="form-check-label small text-secondary" htmlFor="snackCheck">
+                    Soda & Snack Pack (+$3.50)
+                  </label>
+                </div>
+              </div>
+
               {formData.distance && (
                 <div className="p-3 rounded-3 bg-secondary bg-opacity-25 border border-secondary mb-4">
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
                     <div>
                       <span className="text-secondary small d-block">Estimated Fare:</span>
-                      <span className="text-muted small">({formData.distance} km × ${cab?.pricePerKm}/km)</span>
+                      <span className="text-muted small">
+                        ({formData.distance} km × ${cab?.pricePerKm}/km)
+                        {promoApplied && ` - ${promoCode === 'AIRPORT20' ? '20%' : '10%'} off`}
+                        {addDonation && ' + $2.00 donation'}
+                        {(refreshments.water || refreshments.snack) && ` + $${((refreshments.water ? 1.50 : 0) + (refreshments.snack ? 3.50 : 0)).toFixed(2)} refreshments`}
+                      </span>
                     </div>
                     <span className="text-primary fw-bold fs-3">${estimatedPrice}</span>
+                  </div>
+                  <div className="border-top border-secondary pt-2 mt-2">
+                    <span className="text-info small d-block">
+                      <i className="bi bi-clock-history me-1"></i> Driver is nearby and can arrive in approx. 5 minutes.
+                    </span>
+                    <span className="text-muted small d-block mt-1">
+                      <i className="bi bi-credit-card-2-back me-1"></i> Auto-pay Enabled: Saved Visa (**** 9876) will be charged automatically upon trip confirmation.
+                    </span>
                   </div>
                 </div>
               )}

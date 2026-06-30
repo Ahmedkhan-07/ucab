@@ -20,6 +20,22 @@ import Addcar from './admin/Addcar';
 import Unav from './user/Unav';
 import Anav from './admin/Anav';
 
+const UserLayout = ({ children }) => {
+  return (
+    <div className="theme-user min-vh-100 d-flex flex-column">
+      {children}
+    </div>
+  );
+};
+
+const AdminLayout = ({ children }) => {
+  return (
+    <div className="theme-admin min-vh-100 d-flex flex-column">
+      {children}
+    </div>
+  );
+};
+
 // Guard for normal users
 const UserRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -27,10 +43,10 @@ const UserRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
   return (
-    <>
+    <UserLayout>
       <Unav />
-      <div className="container py-4">{children}</div>
-    </>
+      <div className="container py-4 flex-grow-1">{children}</div>
+    </UserLayout>
   );
 };
 
@@ -41,10 +57,10 @@ const AdminRoute = ({ children }) => {
     return <Navigate to="/alogin" replace />;
   }
   return (
-    <>
+    <AdminLayout>
       <Anav />
-      <div className="container py-4">{children}</div>
-    </>
+      <div className="container py-4 flex-grow-1">{children}</div>
+    </AdminLayout>
   );
 };
 
@@ -53,11 +69,11 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/alogin" element={<Alogin />} />
-        <Route path="/aregister" element={<Aregister />} />
+        <Route path="/" element={<UserLayout><Home /></UserLayout>} />
+        <Route path="/login" element={<UserLayout><Login /></UserLayout>} />
+        <Route path="/register" element={<UserLayout><Register /></UserLayout>} />
+        <Route path="/alogin" element={<AdminLayout><Alogin /></AdminLayout>} />
+        <Route path="/aregister" element={<AdminLayout><Aregister /></AdminLayout>} />
 
         {/* Protected User Routes */}
         <Route path="/uhome" element={<UserRoute><Uhome /></UserRoute>} />

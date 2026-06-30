@@ -7,6 +7,7 @@ const Mybookings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [activeTrackingBooking, setActiveTrackingBooking] = useState(null);
 
   const fetchBookings = async () => {
     try {
@@ -77,7 +78,7 @@ const Mybookings = () => {
 
       {bookings.length === 0 ? (
         <div className="card bg-dark border-secondary p-5 text-center text-secondary rounded-4" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-          <span className="fs-1 mb-3">📅</span>
+          <i className="bi bi-calendar-x fs-1 text-secondary mb-3 d-block"></i>
           <h4>No rides booked yet</h4>
           <p className="small mb-4">Book your first cab today and enjoy premium rides.</p>
           <div>
@@ -85,7 +86,7 @@ const Mybookings = () => {
           </div>
         </div>
       ) : (
-        <div className="card bg-dark border-secondary shadow-sm rounded-4 overflow-hidden" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div className="glass-card overflow-hidden">
           <div className="table-responsive">
             <table className="table table-dark table-striped align-middle mb-0">
               <thead>
@@ -118,22 +119,124 @@ const Mybookings = () => {
                     <td className="text-end fw-semibold text-success">${booking.totalPrice?.toFixed(2)}</td>
                     <td className="text-center">{getStatusBadge(booking.status)}</td>
                     <td className="text-center pe-4">
-                      {booking.status === 'pending' ? (
-                        <button
-                          className="btn btn-outline-danger btn-sm"
-                          onClick={() => handleCancel(booking._id)}
-                          disabled={actionLoading}
-                        >
-                          Cancel
-                        </button>
-                      ) : (
-                        <span className="text-muted small">-</span>
-                      )}
+                      <div className="d-flex justify-content-center align-items-center">
+                        {(booking.status === 'pending' || booking.status === 'confirmed') && (
+                          <button
+                            className="btn btn-outline-info btn-sm me-2"
+                            onClick={() => setActiveTrackingBooking(booking)}
+                          >
+                            Track
+                          </button>
+                        )}
+                        {booking.status === 'pending' ? (
+                          <button
+                            className="btn btn-outline-danger btn-sm"
+                            onClick={() => handleCancel(booking._id)}
+                            disabled={actionLoading}
+                          >
+                            Cancel
+                          </button>
+                        ) : booking.status !== 'confirmed' ? (
+                          <span className="text-muted small">-</span>
+                        ) : null}
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {activeTrackingBooking && (
+        <div className="card bg-dark text-light border-info mt-4 p-4 rounded-4 shadow-lg" style={{ border: '1px solid rgba(13, 202, 240, 0.4)' }}>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h4 className="fw-bold text-info mb-0">
+              <i className="bi bi-geo-alt-fill me-2"></i>Live Ride Tracking
+            </h4>
+            <button 
+              className="btn-close btn-close-white" 
+              onClick={() => setActiveTrackingBooking(null)}
+            ></button>
+          </div>
+
+          <div className="row g-3">
+            <div className="col-md-6">
+              <div className="p-3 bg-secondary bg-opacity-10 border border-secondary rounded-3 h-100">
+                <h5 className="fw-bold text-primary mb-1">{activeTrackingBooking.car?.name || 'Cab'}</h5>
+                <p className="small text-secondary mb-3">{activeTrackingBooking.car?.type || 'Standard'} &bull; {activeTrackingBooking.car?.numberPlate || 'N/A'}</p>
+                
+                <div className="d-flex justify-content-between small border-top border-secondary pt-2 mt-2">
+                  <span className="text-secondary">Pickup Location:</span>
+                  <span className="fw-semibold">{activeTrackingBooking.pickupLocation}</span>
+                </div>
+                <div className="d-flex justify-content-between small mt-1">
+                  <span className="text-secondary">Drop-off Location:</span>
+                  <span className="fw-semibold">{activeTrackingBooking.dropLocation}</span>
+                </div>
+                <div className="d-flex justify-content-between small mt-1 border-top border-secondary pt-2">
+                  <span className="text-secondary">Base Fare:</span>
+                  <span className="fw-semibold">${(activeTrackingBooking.totalPrice - (activeTrackingBooking.donation || 0) - (activeTrackingBooking.refreshmentsPrice || 0) + (activeTrackingBooking.discount || 0)).toFixed(2)}</span>
+                </div>
+                {activeTrackingBooking.discount > 0 && (
+                  <div className="d-flex justify-content-between small text-muted">
+                    <span>Discount applied:</span>
+                    <span>-${activeTrackingBooking.discount.toFixed(2)}</span>
+                  </div>
+                )}
+                {activeTrackingBooking.donation > 0 && (
+                  <div className="d-flex justify-content-between small text-muted">
+                    <span>Green Donation:</span>
+                    <span>+${activeTrackingBooking.donation.toFixed(2)}</span>
+                  </div>
+                )}
+                {activeTrackingBooking.refreshmentsPrice > 0 && (
+                  <div className="d-flex justify-content-between small text-muted">
+                    <span>Refreshments ({activeTrackingBooking.refreshments?.join(', ')}):</span>
+                    <span>+${activeTrackingBooking.refreshmentsPrice.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="d-flex justify-content-between small mt-1 border-top border-secondary pt-2">
+                  <span className="text-secondary fw-semibold">Charged Amount:</span>
+                  <span className="fw-bold text-success">${activeTrackingBooking.totalPrice?.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="p-3 bg-secondary bg-opacity-10 border border-secondary rounded-3 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <span className="badge bg-info text-dark mb-2">Live Status</span>
+                  <h5 className="fw-bold text-white mb-2">
+                    {activeTrackingBooking.status === 'pending' 
+                      ? 'Waiting for Driver to Accept' 
+                      : 'Driver is Arriving to your Location'}
+                  </h5>
+                  <div className="progress bg-dark border border-secondary mt-3" style={{ height: '22px', borderRadius: '11px' }}>
+                    <div 
+                      className={`progress-bar progress-bar-striped progress-bar-animated ${activeTrackingBooking.status === 'pending' ? 'bg-warning' : 'bg-info'}`}
+                      role="progressbar" 
+                      style={{ width: activeTrackingBooking.status === 'pending' ? '25%' : '65%' }}
+                      aria-valuenow={activeTrackingBooking.status === 'pending' ? 25 : 65} 
+                      aria-valuemin="0" 
+                      aria-valuemax="100"
+                    >
+                      {activeTrackingBooking.status === 'pending' ? 'Assigning driver...' : 'Arriving in ~3 minutes'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <div className="text-muted small mb-1">
+                    <i className="bi bi-credit-card-2-back text-secondary me-1"></i> Auto-payment authorized via {activeTrackingBooking.paymentMethod || 'Saved Visa (**** 9876)'}.
+                  </div>
+                  <div className="text-muted small">
+                    <i className="bi bi-shield-check text-success me-1"></i> You are fully covered by Sarah's urgent travel guarantee.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

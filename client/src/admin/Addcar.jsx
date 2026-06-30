@@ -72,7 +72,7 @@ const Addcar = () => {
         <Link to="/acabs" className="btn btn-outline-secondary btn-sm">← Back to Cabs</Link>
       </div>
 
-      <div className="card bg-dark text-light border-secondary shadow-sm rounded-4 p-4 mx-auto" style={{ maxWidth: '600px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+      <div className="glass-card p-4 mx-auto" style={{ maxWidth: '600px', borderColor: 'rgba(239, 68, 68, 0.25)' }}>
         <h2 className="fw-bold mb-4 text-center">Add New Cab to Fleet</h2>
         
         {error && <div className="alert alert-danger py-2 small">{error}</div>}

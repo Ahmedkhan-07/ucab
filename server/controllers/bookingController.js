@@ -7,7 +7,17 @@ const User = require('../models/UserSchema');
 // @access  Private
 const createBooking = async (req, res) => {
   try {
-    const { carId, pickupLocation, dropLocation, bookingDate, bookingTime, distance } = req.body;
+    const { 
+      carId, 
+      pickupLocation, 
+      dropLocation, 
+      bookingDate, 
+      bookingTime, 
+      distance,
+      discountCode,
+      donationAmount,
+      refreshments
+    } = req.body;
 
     if (!carId || !pickupLocation || !dropLocation || !bookingDate || !bookingTime || !distance) {
       return res.status(400).json({ message: 'All booking fields are required' });
@@ -22,7 +32,27 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Car is currently unavailable' });
     }
 
-    const calculatedPrice = Number(car.pricePerKm) * Number(distance);
+    // Calculations
+    const baseFare = Number(car.pricePerKm) * Number(distance);
+    
+    let discount = 0;
+    if (discountCode === 'DISCOUNT10' || discountCode === 'WELCOME10') {
+      discount = baseFare * 0.1;
+    } else if (discountCode === 'AIRPORT20') {
+      discount = baseFare * 0.2;
+    }
+
+    const donation = Number(donationAmount) || 0;
+    
+    let refreshmentsPrice = 0;
+    let refreshmentsList = [];
+    if (Array.isArray(refreshments)) {
+      refreshmentsList = refreshments;
+      if (refreshments.includes('water')) refreshmentsPrice += 1.50;
+      if (refreshments.includes('snack')) refreshmentsPrice += 3.50;
+    }
+
+    const finalPrice = Math.max(0, baseFare - discount + donation + refreshmentsPrice);
 
     const booking = await MyBooking.create({
       user: req.user.id,
@@ -32,7 +62,12 @@ const createBooking = async (req, res) => {
       bookingDate: new Date(bookingDate),
       bookingTime,
       distance: Number(distance),
-      totalPrice: calculatedPrice,
+      totalPrice: Number(finalPrice.toFixed(2)),
+      discount: Number(discount.toFixed(2)),
+      donation: Number(donation.toFixed(2)),
+      refreshmentsPrice: Number(refreshmentsPrice.toFixed(2)),
+      refreshments: refreshmentsList,
+      paymentMethod: 'Saved Visa (**** 9876)'
     });
 
     res.status(201).json(booking);

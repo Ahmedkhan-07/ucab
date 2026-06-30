@@ -7,7 +7,19 @@ const connectDB = require('./db/config');
 connectDB();
 
 const app = express();
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes('*')) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'), false);
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve uploaded static files
@@ -22,6 +34,6 @@ app.use('/api/bookings', require('./routes/bookingRoutes'));
 
 app.get('/', (req, res) => res.send('Ucab API running'));
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 

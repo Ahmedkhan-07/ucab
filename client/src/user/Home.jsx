@@ -2,13 +2,8 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
-    <div className="bg-dark text-light min-vh-100 d-flex align-items-center justify-content-center p-3">
-      <div className="container text-center py-5 rounded-4 shadow-lg" style={{
-        maxWidth: '800px',
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
-      }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center p-4">
+      <div className="glass-card container text-center py-5 px-4 shadow-lg" style={{ maxWidth: '800px' }}>
         <h1 className="display-2 fw-bold text-primary mb-3">Welcome to Ucab</h1>
         <p className="lead text-secondary fs-4 mb-5">
           Seamless, reliable, and premium cab booking service at your fingertips.

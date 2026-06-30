@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api';
+import api, { ASSET_URL } from '../api';
 
 const Acabs = () => {
   const [cabs, setCabs] = useState([]);
@@ -66,7 +66,7 @@ const Acabs = () => {
       {cabs.length === 0 ? (
         <div className="alert alert-info bg-dark border-secondary text-center py-4">No cabs registered in the system.</div>
       ) : (
-        <div className="card bg-dark border-secondary shadow-sm rounded-4 overflow-hidden" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div className="glass-card overflow-hidden">
           <div className="table-responsive">
             <table className="table table-dark table-striped align-middle mb-0">
               <thead>
@@ -86,7 +86,7 @@ const Acabs = () => {
                       <div className="d-flex align-items-center">
                         {cab.image ? (
                           <img
-                            src={`http://localhost:5000${cab.image}`}
+                            src={`${ASSET_URL}${cab.image}`}
                             alt={cab.name}
                             className="rounded-3 me-3"
                             style={{ width: '60px', height: '40px', objectFit: 'cover' }}
@@ -97,7 +97,7 @@ const Acabs = () => {
                           />
                         ) : (
                           <div className="bg-secondary rounded-3 me-3 d-flex align-items-center justify-content-center" style={{ width: '60px', height: '40px' }}>
-                            <span>🚕</span>
+                            <i className="bi bi-car-front-fill text-dark"></i>
                           </div>
                         )}
                         <div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import api, { ASSET_URL } from '../api';
 
 const Acabedit = () => {
   const { id } = useParams();
@@ -34,7 +34,7 @@ const Acabedit = () => {
           available: available !== undefined ? String(available) : 'true',
         });
         if (image) {
-          setImagePreview(`http://localhost:5000${image}`);
+          setImagePreview(`${ASSET_URL}${image}`);
         }
       } catch (err) {
         console.error(err);
@@ -109,7 +109,7 @@ const Acabedit = () => {
         <Link to="/acabs" className="btn btn-outline-secondary btn-sm">← Back to Cabs</Link>
       </div>
 
-      <div className="card bg-dark text-light border-secondary shadow-sm rounded-4 p-4 mx-auto" style={{ maxWidth: '600px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+      <div className="glass-card p-4 mx-auto" style={{ maxWidth: '600px', borderColor: 'rgba(239, 68, 68, 0.25)' }}>
         <h2 className="fw-bold mb-4 text-center">Edit Cab Details</h2>
         
         {error && <div className="alert alert-danger py-2 small">{error}</div>}

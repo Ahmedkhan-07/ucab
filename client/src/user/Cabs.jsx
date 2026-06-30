@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api';
+import api, { ASSET_URL } from '../api';
 
 const Cabs = () => {
   const [cabs, setCabs] = useState([]);
@@ -49,10 +49,10 @@ const Cabs = () => {
         <div className="row g-4">
           {cabs.map((cab) => (
             <div className="col-md-4" key={cab._id}>
-              <div className="card h-100 bg-dark text-light border-secondary shadow-sm rounded-4 overflow-hidden" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <div className="glass-card h-100 overflow-hidden">
                 {cab.image ? (
                   <img
-                    src={`http://localhost:5000${cab.image}`}
+                    src={`${ASSET_URL}${cab.image}`}
                     alt={cab.name}
                     className="card-img-top"
                     style={{ height: '200px', objectFit: 'cover' }}
@@ -63,7 +63,7 @@ const Cabs = () => {
                   />
                 ) : (
                   <div className="bg-secondary d-flex align-items-center justify-content-center" style={{ height: '200px' }}>
-                    <span className="text-dark fs-1">🚕</span>
+                    <i className="bi bi-car-front-fill fs-1 text-dark"></i>
                   </div>
                 )}
                 <div className="card-body d-flex flex-column justify-content-between p-4">

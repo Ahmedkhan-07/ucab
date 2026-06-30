@@ -76,7 +76,7 @@ const Bookings = () => {
       {bookings.length === 0 ? (
         <div className="alert alert-info bg-dark border-secondary text-center py-4">No bookings found in the system.</div>
       ) : (
-        <div className="card bg-dark border-secondary shadow-sm rounded-4 overflow-hidden" style={{ border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div className="glass-card overflow-hidden">
           <div className="table-responsive">
             <table className="table table-dark table-striped align-middle mb-0">
               <thead>
