@@ -1,20 +1,25 @@
 # MVC Pattern Explanation
 
-The Cab booking application is structured using the **Model-View-Controller (MVC)** architectural pattern, which isolates concerns and enhances scalability.
+The Cab booking application is structured using the **Model-View-Controller (MVC)** architectural pattern, a software design approach that separates an application into three interconnected layers. This separation allows for modularity, easier maintenance, and scalability.
 
-![MVC Pattern Diagram](../images/mvc_pattern.png)
+![MVC Pattern Diagram](https://drive.google.com/file/d/174uS6bdt8tOCn0nVdBVx4Rz2iCwr3_n8/view?usp=sharing)
 
 ### Model Layer (Data Layer)
-Responsible for database interaction. Using Mongoose, it defines schemas and models for `User`, `Car`, and `Booking`, validating and handling data transactions with MongoDB.
+
+The Model layer is responsible for handling all data-related logic. This includes the definition of data schemas and the operations performed on the database using those schemas. The models are implemented using Mongoose, which provides a schema-based solution to model application data for MongoDB (such as User, Car, and Booking models).
 
 ### Controller Layer
-Contains the intermediate handling code. It takes incoming HTTP requests from the route layer, runs parameters validation, calls the appropriate models, runs calculations, and sends JSON payloads back to the client.
+
+The Controller layer acts as an intermediary between the view (routes) and the model. It receives incoming requests, processes the input (which may include validation or transformation), calls the appropriate methods from the model, performs business calculations (like fare rates and offsets), and then returns a response to the client.
 
 ### View Layer (Routing Layer)
-In a RESTful MERN backend, the view is represented by routes (using Express Router). Endpoints map specific URLs and HTTP methods to their controller counterparts, parsing URLs and preparing request streams.
 
-### Advantages of Using MVC in Ucab
-- **Separation of Concerns**: Isolated modular responsibilities make debugging and styling simple.
-- **Scalability**: New endpoints and modules can be added easily without disrupting current controllers or models.
-- **Reusability**: Shared helpers (like authentication middleware or distance calculations) can be used across multiple routes.
-- **Independent Testing**: Facilitates writing distinct unit and integration test scripts.
+In the context of a backend REST API, the View is implemented as the routing layer, where various endpoints are defined (using Express Router). These endpoints determine how the backend responds to different HTTP requests (GET, POST, PUT, DELETE) and are responsible for invoking the appropriate controller functions.
+
+### Advantages of Using MVC in This Project
+
+*   **Separation of Concerns**: Each layer has a clearly defined responsibility, improving readability and maintainability.
+*   **Scalability**: New features can be added easily by creating new routes, controllers, and models without disrupting existing components.
+*   **Reusability**: Logic in controllers and models (such as helper functions or database queries) can be reused across multiple parts of the application.
+*   **Testing**: Each layer can be tested independently, especially the controllers and models.
+*   **Collaboration-Friendly**: Multiple developers can work concurrently on different components (e.g., frontend components or backend schemas) without conflicts.
