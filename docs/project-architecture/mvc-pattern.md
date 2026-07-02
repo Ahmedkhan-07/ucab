@@ -2,7 +2,7 @@
 
 The Cab booking application is structured using the **Model-View-Controller (MVC)** architectural pattern, a software design approach that separates an application into three interconnected layers. This separation allows for modularity, easier maintenance, and scalability.
 
-![MVC Pattern Diagram](https://drive.google.com/file/d/174uS6bdt8tOCn0nVdBVx4Rz2iCwr3_n8/view?usp=sharing)
+![MVC Pattern Diagram](https://drive.google.com/uc?export=view&id=174uS6bdt8tOCn0nVdBVx4Rz2iCwr3_n8)
 
 ### Model Layer (Data Layer)
 
