@@ -5,7 +5,7 @@ This page contains screenshots of the Ucab application's main views, demonstrati
 ---
 
 ## Landing Page
-![Landing Page](https://drive.google.com/uc?export=view&id=19Y3Imnv8q0Z6fwDPTm3eNMYm4ddSpzM8)
+![Landing Page](https://drive.google.com/uc?export=view&id=1JO42tFexYbHyiXlh2hhsAZB38GCpGu-B)
 
 ## User Registration Form
 ![User Registration Form](https://drive.google.com/uc?export=view&id=1ZoOYV3MpmjVLD9nAP16rleC7uwg-ay8Z)
